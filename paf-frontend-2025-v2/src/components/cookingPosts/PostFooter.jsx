@@ -152,83 +152,83 @@ const PostFooter = ({ post }) => {
 
       {/* Comments Modal */}
       <Modal
-        isOpen={isModalOpen}
-        onRequestClose={closeModal}
-        contentLabel="Comments"
-        className="max-w-lg w-[600px] mx-auto mt-20 bg-white rounded-lg shadow-xl overflow-hidden"
-        overlayClassName="fixed inset-0  bg-opacity-50 flex items-center justify-center p-4"
-
-      >
-        <div className="flex  flex-col h-full max-h-[80vh]">
-          <div className="flex  justify-between items-center p-4 border-b">
-            <h2 className="text-xl font-semibold">Comments</h2>
-            <button 
-              onClick={closeModal}
-              className="text-gray-500 hover:text-gray-700"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-          
-          <div className="overflow-y-auto flex-grow p-4 space-y-4">
-            {comments.length === 0 ? (
-              <p className="text-gray-500 text-center">No comments yet.</p>
-            ) : (
-              comments.map((comment) => (
-                <div key={comment.id} className="bg-gray-50 p-3 rounded-lg">
-                  <div className="flex justify-between">
-                    <div className="font-semibold">{comment.commentedBy?.name || 'Anonymous'}</div>
-                    <div className="text-xs text-gray-500">
-                      {new Date(comment.commentedAt).toLocaleString()}
-                    </div>
-                  </div>
-                  <p className="mt-1">{comment.comment}</p>
-                  
-                  {/* Comment actions (edit/delete) */}
-                  {comment.commentedBy.id ===localStorage.getItem("userId") && (
-                    <div className="flex space-x-2 mt-2 justify-end">
-                      <button 
-                        onClick={() => handleEditComment(comment)}
-                        className="text-xs text-blue-600 hover:text-blue-800"
-                      >
-                        Edit
-                      </button>
-                      <button 
-                        onClick={() => handleDeleteComment(comment.id)}
-                        className="text-xs text-red-600 hover:text-red-800"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ))
-            )}
-          </div>
-          
-          <div className="p-4 border-t">
-            <form onSubmit={handleCommentSubmit} className="flex space-x-2">
-              <input
-                type="text"
-                value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
-                placeholder="Write a comment..."
-                className="flex-grow px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                disabled={isLoading}
-              />
-              <button
-                type="submit"
-                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50"
-                disabled={isLoading || !commentText.trim()}
-              >
-                {editingComment ? 'Update' : 'Send'}
-              </button>
-            </form>
-          </div>
+      isOpen={isModalOpen}
+      onRequestClose={closeModal}
+      contentLabel="Comments"
+      className="w-full max-w-xl mx-auto mt-24 bg-white rounded-2xl shadow-2xl border border-gray-200 transition-all duration-200"
+      overlayClassName="fixed inset-0  bg-opacity-50 flex items-center justify-center p-4"
+    >
+      <div className="flex flex-col h-full max-h-[80vh]">
+        {/* Modal Header */}
+        <div className="flex justify-between items-center p-5 border-b border-gray-100">
+          <h2 className="text-xl font-semibold text-gray-800">Comments</h2>
+          <button 
+            onClick={closeModal}
+            className="text-gray-400 hover:text-gray-700 transition-colors duration-150"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
-      </Modal>
+
+        {/* Modal Body */}
+        <div className="overflow-y-auto flex-grow px-5 py-4 space-y-4">
+          {comments.length === 0 ? (
+            <p className="text-gray-400 text-center italic">No comments yet.</p>
+          ) : (
+            comments.map((comment) => (
+              <div key={comment.id} className="bg-gray-50 px-4 py-3 rounded-xl border border-gray-200 shadow-sm">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-sm font-medium text-gray-800">{comment.commentedBy?.name || 'Anonymous'}</span>
+                  <span className="text-xs text-gray-400">{new Date(comment.commentedAt).toLocaleString()}</span>
+                </div>
+                <p className="text-sm text-gray-700">{comment.comment}</p>
+
+                {comment.commentedBy.id === localStorage.getItem("userId") && (
+                  <div className="flex justify-end space-x-3 mt-2">
+                    <button 
+                      onClick={() => handleEditComment(comment)}
+                      className="text-xs text-blue-600 hover:text-blue-800 transition-colors"
+                    >
+                      Edit
+                    </button>
+                    <button 
+                      onClick={() => handleDeleteComment(comment.id)}
+                      className="text-xs text-red-600 hover:text-red-800 transition-colors"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Modal Footer / Input */}
+        <div className="p-5 border-t border-gray-100">
+          <form onSubmit={handleCommentSubmit} className="flex gap-3">
+            <input
+              type="text"
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              placeholder="Write a comment..."
+              className="flex-grow px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              disabled={isLoading}
+            />
+            <button
+              type="submit"
+              className="bg-green-600 text-white px-4 py-2 text-sm rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500 disabled:opacity-50"
+              disabled={isLoading || !commentText.trim()}
+            >
+              {editingComment ? 'Update' : 'Send'}
+            </button>
+          </form>
+        </div>
+      </div>
+    </Modal>
+
     </>
   );
 };
