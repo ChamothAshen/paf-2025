@@ -61,12 +61,22 @@ const Navbar = () => {
                 Groups
               </Link>
               <Link
-                to={`/shared-posts/${userId}`} // Pass the user ID as a query parameter
+                to={`/shared-posts?userId=${userId}`} // Pass the user ID as a query parameter
                 className={`${
                   isActive("/shared-posts") ? "text-blue-600" : "text-gray-600"
                 } px-3 py-2 rounded-md text-sm font-medium hover:text-blue-600`}
               >
                 Shared Posts
+              </Link>
+              <Link
+                to="/learning-plans"
+                className={`${
+                  isActive("/learning-plans")
+                    ? "text-blue-700 border-blue-500"
+                    : "text-gray-600 border-transparent"
+                } hover:text-blue-500 inline-flex items-center px-1 pt-1 border-b-2 hover:border-blue-300 font-medium`}
+              >
+                Learning Plans
               </Link>
             </div>
           </div>
