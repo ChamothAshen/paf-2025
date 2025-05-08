@@ -31,7 +31,7 @@ const Navbar = () => {
             <Link to={"/"}>
               <div className="flex-shrink-0 flex items-center">
                 <h1 className="text-green-600 text-xl font-bold">
-                  Knowledge Hub
+                  SkillShare
                 </h1>
               </div>
             </Link>
