@@ -1,7 +1,6 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import Navbar from "./components/common/Navbar";
-import Sidebar from "./components/common/Sidebar";
 import LoginPage from "./pages/LoginPage";
 import OAuth2RedirectHandler from "./pages/OAuth2RedirectHandler";
 import ProfilePage from "./pages/ProfilePage";
@@ -22,7 +21,6 @@ const DefaultLayout = () => (
   <div className="flex flex-col h-screen">
     <Navbar />
     <div className="flex flex-1">
-      <Sidebar /> {/* Sidebar spans full height */}
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <Outlet />
