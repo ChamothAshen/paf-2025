@@ -24,14 +24,14 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-green-50 shadow-md">
+    <nav className="bg-blue-50 shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link to={"/"}>
               <div className="flex-shrink-0 flex items-center">
-                <h1 className="text-green-600 text-xl font-bold">
-                  Knowledge Hub
+                <h1 className="text-blue-600 text-xl font-bold">
+                  SkillShare
                 </h1>
               </div>
             </Link>
@@ -40,9 +40,9 @@ const Navbar = () => {
                 to="/"
                 className={`${
                   isActive("/")
-                    ? "text-green-700 border-green-500"
+                    ? "text-blue-700 border-blue-500"
                     : "text-gray-600 border-transparent"
-                } hover:text-green-500 inline-flex items-center px-1 pt-1 border-b-2 hover:border-green-300 font-medium`}
+                } hover:text-blue-500 inline-flex items-center px-1 pt-1 border-b-2 hover:border-blue-300 font-medium`}
               >
                 Home
               </Link>
@@ -50,9 +50,9 @@ const Navbar = () => {
                 to="/tasks"
                 className={`${
                   isActive("/tasks")
-                    ? "text-green-700 border-green-500"
+                    ? "text-blue-700 border-blue-500"
                     : "text-gray-600 border-transparent"
-                } hover:text-green-500 inline-flex items-center px-1 pt-1 border-b-2 hover:border-green-300 font-medium`}
+                } hover:text-blue-500 inline-flex items-center px-1 pt-1 border-b-2 hover:border-blue-300 font-medium`}
               >
                 Tasks
               </Link>
@@ -60,9 +60,9 @@ const Navbar = () => {
                 to="/groups"
                 className={`${
                   isActive("/groups")
-                    ? "text-green-700 border-green-500"
+                    ? "text-blue-700 border-blue-500"
                     : "text-gray-600 border-transparent"
-                } hover:text-green-500 inline-flex items-center px-1 pt-1 border-b-2 hover:border-green-300 font-medium`}
+                } hover:text-blue-500 inline-flex items-center px-1 pt-1 border-b-2 hover:border-blue-300 font-medium`}
               >
                 Groups
               </Link>
@@ -74,8 +74,8 @@ const Navbar = () => {
                 <Link
                   to="/profile"
                   className={`${
-                    isActive("/profile") ? "text-green-700" : "text-gray-600"
-                  } hover:text-green-500 px-3 py-2 rounded-md font-medium`}
+                    isActive("/profile") ? "text-blue-700" : "text-gray-600"
+                  } hover:text-blue-500 px-3 py-2 rounded-md font-medium`}
                 >
                   Profile
                 </Link>
@@ -83,15 +83,15 @@ const Navbar = () => {
                   to="/notification"
                   className={`${
                     isActive("/notification")
-                      ? "text-green-700"
+                      ? "text-blue-700"
                       : "text-gray-600"
-                  } hover:text-green-500 px-3 py-2 rounded-md font-medium`}
+                  } hover:text-blue-500 px-3 py-2 rounded-md font-medium`}
                 >
                   <Bell />
                 </Link>
                 <button
                   onClick={() => authState.logout()}
-                  className="ml-4 bg-green-100 hover:bg-green-200 text-green-700 px-3 py-2 rounded-md font-medium"
+                  className="ml-4 bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-2 rounded-md font-medium"
                 >
                   Logout
                 </button>
@@ -101,8 +101,8 @@ const Navbar = () => {
                 <Link
                   to="/login"
                   className={`${
-                    isActive("/login") ? "bg-green-600" : "bg-green-500"
-                  } hover:bg-green-600 text-white px-4 py-2 rounded-md font-medium`}
+                    isActive("/login") ? "bg-blue-600" : "bg-blue-500"
+                  } hover:bg-blue-600 text-white px-4 py-2 rounded-md font-medium`}
                 >
                   Login
                 </Link>
@@ -110,7 +110,7 @@ const Navbar = () => {
                   to="/signup"
                   className={`ml-4 ${
                     isActive("/signup") ? "bg-gray-100" : "bg-white"
-                  } hover:bg-gray-100 text-green-600 border border-green-500 px-4 py-2 rounded-md font-medium`}
+                  } hover:bg-gray-100 text-blue-600 border border-blue-500 px-4 py-2 rounded-md font-medium`}
                 >
                   Sign Up
                 </Link>
