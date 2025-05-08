@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import Modal from 'react-modal';
-import likeApi from '../../api/likeApi';
-import commentApi from '../../api/commentApi';
+import React, { useState, useEffect } from "react";
+import Modal from "react-modal";
+import likeApi from "../../api/likeApi";
+import commentApi from "../../api/commentApi";
+import axios from "axios"; // Import axios for API calls
 
 // Set the app element for accessibility
-Modal.setAppElement('#root');
+Modal.setAppElement("#root");
 
 const PostFooter = ({ post }) => {
   const [likes, setLikes] = useState([]);
@@ -12,9 +13,11 @@ const PostFooter = ({ post }) => {
   const [userLike, setUserLike] = useState(null);
   const [isLiked, setIsLiked] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [commentText, setCommentText] = useState('');
+  const [commentText, setCommentText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [editingComment, setEditingComment] = useState(null);
+
+  const userId = localStorage.getItem("userId"); // Get the userId from localStorage
 
   // Fetch likes and comments when post changes
   useEffect(() => {
@@ -30,7 +33,7 @@ const PostFooter = ({ post }) => {
         const commentsData = await commentApi.getCommentsByPost(post.id);
         setComments(commentsData);
       } catch (error) {
-        console.error('Error fetching post data:', error);
+        console.error("Error fetching post data:", error);
       }
     };
 
@@ -55,7 +58,7 @@ const PostFooter = ({ post }) => {
         setLikes((prev) => [...prev, newLike]);
       }
     } catch (error) {
-      console.error('Error toggling like status:', error);
+      console.error("Error toggling like status:", error);
     } finally {
       setIsLoading(false);
     }
@@ -80,30 +83,24 @@ const PostFooter = ({ post }) => {
         setComments((prev) => [...prev, newComment]);
       }
 
-      setCommentText('');
+      setCommentText("");
     } catch (error) {
-      console.error('Error submitting comment:', error);
+      console.error("Error submitting comment:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleShare = () => {
-    const shareText = `Check out this post: ${post.title}\n${post.description}`;
-    const shareUrl = `${window.location.origin}/post/${post.id}`;
-
-    if (navigator.share) {
-      navigator
-        .share({
-          title: post.title,
-          text: shareText,
-          url: shareUrl,
-        })
-        .then(() => console.log('Post shared successfully'))
-        .catch((error) => console.error('Error sharing post:', error));
-    } else {
-      navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
-      alert('Post link copied to clipboard!');
+  const handleSharePost = async () => {
+    try {
+      const response = await axios.post(
+        `http://localhost:8080/api/shared-posts?postId=${post.id}&userId=${userId}`
+      );
+      alert("Post shared successfully!");
+      console.log("Shared post response:", response.data);
+    } catch (error) {
+      console.error("Error sharing post:", error);
+      alert("Failed to share the post.");
     }
   };
 
@@ -113,7 +110,7 @@ const PostFooter = ({ post }) => {
         <div className="flex items-center space-x-4">
           <button
             className={`flex items-center space-x-1 ${
-              isLiked ? 'text-green-600' : 'text-gray-500 hover:text-green-600'
+              isLiked ? "text-green-600" : "text-gray-500 hover:text-green-600"
             }`}
             onClick={handleLikeToggle}
             disabled={isLoading}
@@ -121,7 +118,7 @@ const PostFooter = ({ post }) => {
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5"
-              fill={isLiked ? 'currentColor' : 'none'}
+              fill={isLiked ? "currentColor" : "none"}
               viewBox="0 0 24 24"
               stroke="currentColor"
             >
@@ -158,7 +155,7 @@ const PostFooter = ({ post }) => {
 
           <button
             className="flex items-center space-x-1 text-gray-500 hover:text-green-600"
-            onClick={handleShare}
+            onClick={handleSharePost}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -181,7 +178,7 @@ const PostFooter = ({ post }) => {
         <div className="text-sm text-gray-500">
           {likes.length > 0 && (
             <span>
-              {likes.length} {likes.length === 1 ? 'person' : 'people'} liked
+              {likes.length} {likes.length === 1 ? "person" : "people"} liked
               this post
             </span>
           )}
@@ -227,7 +224,7 @@ const PostFooter = ({ post }) => {
               comments.map((comment) => (
                 <div key={comment.id} className="bg-gray-50 p-3 rounded-lg">
                   <div className="flex justify-between">
-                    <div className="font-semibold">{comment.commentedBy?.name || 'Anonymous'}</div>
+                    <div className="font-semibold">{comment.commentedBy?.name || "Anonymous"}</div>
                     <div className="text-xs text-gray-500">
                       {new Date(comment.commentedAt).toLocaleString()}
                     </div>
@@ -271,7 +268,7 @@ const PostFooter = ({ post }) => {
                 className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50"
                 disabled={isLoading || !commentText.trim()}
               >
-                {editingComment ? 'Update' : 'Send'}
+                {editingComment ? "Update" : "Send"}
               </button>
             </form>
           </div>

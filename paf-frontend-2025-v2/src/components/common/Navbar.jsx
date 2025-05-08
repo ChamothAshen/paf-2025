@@ -24,7 +24,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-blue-50 shadow-md">
+    <nav className="bg-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
@@ -40,9 +40,9 @@ const Navbar = () => {
                 to="/"
                 className={`${
                   isActive("/")
-                    ? "text-blue-700 border-blue-500"
-                    : "text-gray-600 border-transparent"
-                } hover:text-blue-500 inline-flex items-center px-1 pt-1 border-b-2 hover:border-blue-300 font-medium`}
+                    ? "text-blue-600"
+                    : "text-gray-600"
+                } px-3 py-2 rounded-md text-sm font-medium hover:text-blue-600`}
               >
                 Home
               </Link>
@@ -50,9 +50,9 @@ const Navbar = () => {
                 to="/tasks"
                 className={`${
                   isActive("/tasks")
-                    ? "text-blue-700 border-blue-500"
-                    : "text-gray-600 border-transparent"
-                } hover:text-blue-500 inline-flex items-center px-1 pt-1 border-b-2 hover:border-blue-300 font-medium`}
+                    ? "text-blue-600"
+                    : "text-gray-600"
+                } px-3 py-2 rounded-md text-sm font-medium hover:text-blue-600`}
               >
                 Tasks
               </Link>
@@ -60,11 +60,21 @@ const Navbar = () => {
                 to="/groups"
                 className={`${
                   isActive("/groups")
-                    ? "text-blue-700 border-blue-500"
-                    : "text-gray-600 border-transparent"
-                } hover:text-blue-500 inline-flex items-center px-1 pt-1 border-b-2 hover:border-blue-300 font-medium`}
+                    ? "text-blue-600"
+                    : "text-gray-600"
+                } px-3 py-2 rounded-md text-sm font-medium hover:text-blue-600`}
               >
                 Groups
+              </Link>
+              <Link
+                to="/shared-posts"
+                className={`${
+                  isActive("/shared-posts")
+                    ? "text-blue-600"
+                    : "text-gray-600"
+                } px-3 py-2 rounded-md text-sm font-medium hover:text-blue-600`}
+              >
+                Shared Posts
               </Link>
             </div>
           </div>
