@@ -23,6 +23,8 @@ const Navbar = () => {
     return false;
   };
 
+  const userId = localStorage.getItem("userId"); // Get the current user ID from localStorage
+
   return (
     <nav className="bg-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -30,18 +32,14 @@ const Navbar = () => {
           <div className="flex items-center">
             <Link to={"/"}>
               <div className="flex-shrink-0 flex items-center">
-                <h1 className="text-blue-600 text-xl font-bold">
-                  SkillShare
-                </h1>
+                <h1 className="text-blue-600 text-xl font-bold">SkillShare</h1>
               </div>
             </Link>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
               <Link
                 to="/"
                 className={`${
-                  isActive("/")
-                    ? "text-blue-600"
-                    : "text-gray-600"
+                  isActive("/") ? "text-blue-600" : "text-gray-600"
                 } px-3 py-2 rounded-md text-sm font-medium hover:text-blue-600`}
               >
                 Home
@@ -49,9 +47,7 @@ const Navbar = () => {
               <Link
                 to="/tasks"
                 className={`${
-                  isActive("/tasks")
-                    ? "text-blue-600"
-                    : "text-gray-600"
+                  isActive("/tasks") ? "text-blue-600" : "text-gray-600"
                 } px-3 py-2 rounded-md text-sm font-medium hover:text-blue-600`}
               >
                 Tasks
@@ -59,19 +55,15 @@ const Navbar = () => {
               <Link
                 to="/groups"
                 className={`${
-                  isActive("/groups")
-                    ? "text-blue-600"
-                    : "text-gray-600"
+                  isActive("/groups") ? "text-blue-600" : "text-gray-600"
                 } px-3 py-2 rounded-md text-sm font-medium hover:text-blue-600`}
               >
                 Groups
               </Link>
               <Link
-                to="/shared-posts"
+                to={`/shared-posts/${userId}`} // Pass the user ID as a query parameter
                 className={`${
-                  isActive("/shared-posts")
-                    ? "text-blue-600"
-                    : "text-gray-600"
+                  isActive("/shared-posts") ? "text-blue-600" : "text-gray-600"
                 } px-3 py-2 rounded-md text-sm font-medium hover:text-blue-600`}
               >
                 Shared Posts

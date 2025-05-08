@@ -14,6 +14,7 @@ import GroupsPage from "./pages/GroupsPage";
 import SingleGroupPage from "./pages/SingleGroupPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import RegisterPage from "./pages/RegisterPage";
+import SharedPostsPage from "./pages/SharedPostsPage";
 
 // Layout component with Navbar and Sidebar
 const DefaultLayout = () => (
@@ -58,6 +59,7 @@ const App = () => {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/user-profile/:id" element={<UserProfilePage />} />
             <Route path="/group/:id" element={<SingleGroupPage />} />
+            <Route path="/shared-posts/:userId" element={<SharedPostsPage />} />
           </Route>
         </Routes>
       </div>

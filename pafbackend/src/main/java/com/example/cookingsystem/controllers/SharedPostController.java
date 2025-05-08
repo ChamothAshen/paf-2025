@@ -19,8 +19,9 @@ public class SharedPostController {
         return ResponseEntity.ok(sharedPost);
     }
 
-    @GetMapping("/user/{userId}")
-    public List<SharedPost> getSharedPostsByUserId(@PathVariable String userId) {
+    // Retrieve shared posts by userId passed as a query parameter
+    @GetMapping("/user")
+    public List<SharedPost> getSharedPostsByUserId(@RequestParam String userId) {
         return sharedPostService.getSharedPostsByUserId(userId);
     }
 }

@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom"; // Import useParams to get URL parameters
 import axios from "axios";
 
 const SharedPostsPage = () => {
   const [sharedPosts, setSharedPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const userId = localStorage.getItem("userId"); // Get the user ID from localStorage
+  const { userId } = useParams(); // Get userId from URL parameters
 
   useEffect(() => {
     const fetchSharedPosts = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/api/shared-posts/user/${userId}`
+          `http://localhost:8080/api/shared-posts/user?userId=${userId}`
         ); // Fetch posts shared by the specific user
         setSharedPosts(response.data);
       } catch (error) {
@@ -24,7 +24,7 @@ const SharedPostsPage = () => {
     if (userId) {
       fetchSharedPosts();
     } else {
-      console.error("User ID not found in localStorage.");
+      console.error("User ID not found in URL parameters.");
       setLoading(false);
     }
   }, [userId]);
