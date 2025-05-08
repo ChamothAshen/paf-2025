@@ -13,6 +13,7 @@ import GroupsPage from "./pages/GroupsPage";
 import SingleGroupPage from "./pages/SingleGroupPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import RegisterPage from "./pages/RegisterPage";
+import LearningPlansPage from "./pages/LearningPlansPage";
 
 // Layout component with Navbar
 const DefaultLayout = () => (
@@ -42,6 +43,7 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="/tasks" element={<TasksPage />} />
             <Route path="/groups" element={<GroupsPage />} />
+            <Route path="/learning-plans" element={<LearningPlansPage />} />
             <Route path="/notification" element={<NotificationsPage />} />
             <Route
               path="/login/oauth2/code/google"

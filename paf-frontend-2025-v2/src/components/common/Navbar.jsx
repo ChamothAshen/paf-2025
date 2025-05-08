@@ -66,6 +66,16 @@ const Navbar = () => {
               >
                 Groups
               </Link>
+              <Link
+                to="/learning-plans"
+                className={`${
+                  isActive("/learning-plans")
+                    ? "text-blue-700 border-blue-500"
+                    : "text-gray-600 border-transparent"
+                } hover:text-blue-500 inline-flex items-center px-1 pt-1 border-b-2 hover:border-blue-300 font-medium`}
+              >
+                Learning Plans
+              </Link>
             </div>
           </div>
           <div className="flex items-center">
