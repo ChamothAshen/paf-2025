@@ -15,28 +15,26 @@ const PostFooter = ({ post }) => {
   const [commentText, setCommentText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [editingComment, setEditingComment] = useState(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [commentToDelete, setCommentToDelete] = useState(null);
 
-  // Fetch likes and comments when post changes
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Get likes
         const likesData = await likeApi.getLikesByPost(post.id);
         setLikes(likesData);
-        
-        // Check if user has liked this post
+
         const likeStatus = await likeApi.getLikeStatus(post.id);
         setIsLiked(likeStatus.liked);
         setUserLike(likeStatus.likeId);
-        
-        // Get comments
+
         const commentsData = await commentApi.getCommentsByPost(post.id);
         setComments(commentsData);
       } catch (error) {
         console.error('Error fetching post data:', error);
       }
     };
-    
+
     if (post && post.id) {
       fetchData();
     }
@@ -45,15 +43,12 @@ const PostFooter = ({ post }) => {
   const handleLikeToggle = async () => {
     try {
       setIsLoading(true);
-      
       if (isLiked && userLike) {
-        // Unlike the post
         await likeApi.deleteLike(userLike);
         setIsLiked(false);
         setUserLike(null);
         setLikes(prev => prev.filter(like => like.id !== userLike));
       } else {
-        // Like the post
         const newLike = await likeApi.createLike(post.id);
         setIsLiked(true);
         setUserLike(newLike.id);
@@ -68,23 +63,18 @@ const PostFooter = ({ post }) => {
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
-    
     if (!commentText.trim()) return;
-    
+
     try {
       setIsLoading(true);
-      
       if (editingComment) {
-        // Update existing comment
         const updatedComment = await commentApi.updateComment(editingComment.id, commentText);
         setComments(prev => prev.map(c => c.id === editingComment.id ? updatedComment : c));
         setEditingComment(null);
       } else {
-        // Create new comment
         const newComment = await commentApi.createComment(post.id, commentText);
         setComments(prev => [...prev, newComment]);
       }
-      
       setCommentText('');
     } catch (error) {
       console.error('Error submitting comment:', error);
@@ -99,16 +89,28 @@ const PostFooter = ({ post }) => {
     setIsModalOpen(true);
   };
 
-  const handleDeleteComment = async (commentId) => {
+  const handleDeleteClick = (commentId) => {
+    setCommentToDelete(commentId);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = async () => {
     try {
       setIsLoading(true);
-      await commentApi.deleteComment(commentId);
-      setComments(prev => prev.filter(c => c.id !== commentId));
+      await commentApi.deleteComment(commentToDelete);
+      setComments(prev => prev.filter(c => c.id !== commentToDelete));
     } catch (error) {
       console.error('Error deleting comment:', error);
     } finally {
       setIsLoading(false);
+      setShowDeleteConfirm(false);
+      setCommentToDelete(null);
     }
+  };
+
+  const closeDeleteConfirm = () => {
+    setShowDeleteConfirm(false);
+    setCommentToDelete(null);
   };
 
   const closeModal = () => {
@@ -131,7 +133,6 @@ const PostFooter = ({ post }) => {
             </svg>
             <span>{likes.length || 0}</span>
           </button>
-          
           <button 
             className="flex items-center space-x-1 text-gray-500 hover:text-green-600"
             onClick={() => setIsModalOpen(true)}
@@ -142,7 +143,6 @@ const PostFooter = ({ post }) => {
             <span>{comments.length || 0}</span>
           </button>
         </div>
-        
         <div className="text-sm text-gray-500">
           {likes.length > 0 && (
             <span>{likes.length} {likes.length === 1 ? 'person' : 'people'} liked this post</span>
@@ -152,83 +152,99 @@ const PostFooter = ({ post }) => {
 
       {/* Comments Modal */}
       <Modal
-      isOpen={isModalOpen}
-      onRequestClose={closeModal}
-      contentLabel="Comments"
-      className="w-full max-w-xl mx-auto mt-24 bg-white rounded-2xl shadow-2xl border border-gray-200 transition-all duration-200"
-      overlayClassName="fixed inset-0  bg-opacity-50 flex items-center justify-center p-4"
-    >
-      <div className="flex flex-col h-full max-h-[80vh]">
-        {/* Modal Header */}
-        <div className="flex justify-between items-center p-5 border-b border-gray-100">
-          <h2 className="text-xl font-semibold text-gray-800">Comments</h2>
-          <button 
-            onClick={closeModal}
-            className="text-gray-400 hover:text-gray-700 transition-colors duration-150"
+        isOpen={isModalOpen}
+        onRequestClose={closeModal}
+        contentLabel="Comments"
+        className="w-full max-w-xl mx-auto mt-24 bg-white rounded-2xl shadow-2xl border border-gray-200 transition-all duration-200"
+        overlayClassName="fixed inset-0  bg-opacity-50 flex items-center justify-center p-4"
+      >
+        <div className="flex flex-col h-full max-h-[80vh]">
+          {/* Modal Header */}
+          <div className="flex justify-between items-center p-5 border-b border-gray-100">
+            <h2 className="text-xl font-semibold text-gray-800">Comments</h2>
+            <button onClick={closeModal} className="text-gray-400 hover:text-gray-700 transition-colors duration-150">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Modal Body */}
+          <div className="overflow-y-auto flex-grow px-5 py-4 space-y-4">
+            {comments.length === 0 ? (
+              <p className="text-gray-400 text-center italic">No comments yet.</p>
+            ) : (
+              comments.map((comment) => (
+                <div key={comment.id} className="bg-gray-50 px-4 py-3 rounded-xl border border-gray-200 shadow-sm">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-sm font-medium text-gray-800">{comment.commentedBy?.name || 'Anonymous'}</span>
+                    <span className="text-xs text-gray-400">{new Date(comment.commentedAt).toLocaleString()}</span>
+                  </div>
+                  <p className="text-sm text-gray-700">{comment.comment}</p>
+
+                  {comment.commentedBy.id === localStorage.getItem("userId") && (
+                    <div className="flex justify-end space-x-3 mt-2">
+                      <button onClick={() => handleEditComment(comment)} className="text-xs text-blue-600 hover:text-blue-800 transition-colors">
+                        Edit
+                      </button>
+                      <button onClick={() => handleDeleteClick(comment.id)} className="text-xs text-red-600 hover:text-red-800 transition-colors">
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Modal Footer */}
+          <div className="p-5 border-t border-gray-100">
+            <form onSubmit={handleCommentSubmit} className="flex gap-3">
+              <input
+                type="text"
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                placeholder="Write a comment..."
+                className="flex-grow px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                disabled={isLoading}
+              />
+              <button
+                type="submit"
+                className="bg-green-600 text-white px-4 py-2 text-sm rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500 disabled:opacity-50"
+                disabled={isLoading || !commentText.trim()}
+              >
+                {editingComment ? 'Update' : 'Send'}
+              </button>
+            </form>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={showDeleteConfirm}
+        onRequestClose={closeDeleteConfirm}
+        contentLabel="Confirm Delete"
+        className="w-full max-w-md mx-auto mt-40 bg-white rounded-xl shadow-2xl border border-gray-200 p-6"
+        overlayClassName="fixed inset-0  bg-opacity-50 flex items-center justify-center p-4"
+      >
+        <h2 className="text-lg font-semibold text-gray-800 mb-4">Delete Comment</h2>
+        <p className="text-sm text-gray-600 mb-6">Are you sure you want to delete this comment? This action cannot be undone.</p>
+        <div className="flex justify-end gap-3">
+          <button
+            onClick={closeDeleteConfirm}
+            className="px-4 py-2 text-sm text-gray-600 bg-gray-100 rounded hover:bg-gray-200"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            Cancel
+          </button>
+          <button
+            onClick={confirmDelete}
+            className="px-4 py-2 text-sm text-white bg-red-600 rounded hover:bg-red-700"
+          >
+            Delete
           </button>
         </div>
-
-        {/* Modal Body */}
-        <div className="overflow-y-auto flex-grow px-5 py-4 space-y-4">
-          {comments.length === 0 ? (
-            <p className="text-gray-400 text-center italic">No comments yet.</p>
-          ) : (
-            comments.map((comment) => (
-              <div key={comment.id} className="bg-gray-50 px-4 py-3 rounded-xl border border-gray-200 shadow-sm">
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-sm font-medium text-gray-800">{comment.commentedBy?.name || 'Anonymous'}</span>
-                  <span className="text-xs text-gray-400">{new Date(comment.commentedAt).toLocaleString()}</span>
-                </div>
-                <p className="text-sm text-gray-700">{comment.comment}</p>
-
-                {comment.commentedBy.id === localStorage.getItem("userId") && (
-                  <div className="flex justify-end space-x-3 mt-2">
-                    <button 
-                      onClick={() => handleEditComment(comment)}
-                      className="text-xs text-blue-600 hover:text-blue-800 transition-colors"
-                    >
-                      Edit
-                    </button>
-                    <button 
-                      onClick={() => handleDeleteComment(comment.id)}
-                      className="text-xs text-red-600 hover:text-red-800 transition-colors"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                )}
-              </div>
-            ))
-          )}
-        </div>
-
-        {/* Modal Footer / Input */}
-        <div className="p-5 border-t border-gray-100">
-          <form onSubmit={handleCommentSubmit} className="flex gap-3">
-            <input
-              type="text"
-              value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
-              placeholder="Write a comment..."
-              className="flex-grow px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-              disabled={isLoading}
-            />
-            <button
-              type="submit"
-              className="bg-green-600 text-white px-4 py-2 text-sm rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500 disabled:opacity-50"
-              disabled={isLoading || !commentText.trim()}
-            >
-              {editingComment ? 'Update' : 'Send'}
-            </button>
-          </form>
-        </div>
-      </div>
-    </Modal>
-
+      </Modal>
     </>
   );
 };
