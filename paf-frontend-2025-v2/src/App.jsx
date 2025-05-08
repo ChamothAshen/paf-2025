@@ -13,16 +13,21 @@ import GroupsPage from "./pages/GroupsPage";
 import SingleGroupPage from "./pages/SingleGroupPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import RegisterPage from "./pages/RegisterPage";
+import SharedPostsPage from "./pages/SharedPostsPage";
 import LearningPlansPage from "./pages/LearningPlansPage";
 
-// Layout component with Navbar
+// Layout component with Navbar and Sidebar
 const DefaultLayout = () => (
-  <>
+  <div className="flex flex-col h-screen">
     <Navbar />
-    <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-      <Outlet />
+    <div className="flex flex-1">
+      <div className="flex-1 overflow-y-auto">
+        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+          <Outlet />
+        </div>
+      </div>
     </div>
-  </>
+  </div>
 );
 
 const Home = () => <CookingPostsPage />;
@@ -54,6 +59,7 @@ const App = () => {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/user-profile/:id" element={<UserProfilePage />} />
             <Route path="/group/:id" element={<SingleGroupPage />} />
+            <Route path="/shared-posts/:userId" element={<SharedPostsPage />} />
           </Route>
         </Routes>
       </div>

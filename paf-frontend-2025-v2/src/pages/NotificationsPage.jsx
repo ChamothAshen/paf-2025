@@ -45,6 +45,19 @@ const NotificationsPage = () => {
     }).format(date);
   };
 
+  const handleDeleteNotification = async (notificationId) => {
+    try {
+      await notificationApi.deleteNotification(notificationId);
+      setNotifications((prev) =>
+        prev.filter((notification) => notification.id !== notificationId)
+      );
+      alert("Notification deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting notification:", error);
+      alert("Failed to delete notification.");
+    }
+  };
+
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto p-4">
@@ -130,6 +143,12 @@ const NotificationsPage = () => {
                   {notification.subtitle}
                 </p>
               </div>
+              <button
+                onClick={() => handleDeleteNotification(notification.id)}
+                className="ml-4 text-red-500 hover:text-red-700"
+              >
+                <Trash2 size={20} />
+              </button>
             </div>
           ))}
         </div>
