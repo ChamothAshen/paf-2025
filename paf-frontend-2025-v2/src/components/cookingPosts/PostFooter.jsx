@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import likeApi from '../../api/likeApi';
 import commentApi from '../../api/commentApi';
+import axios from 'axios'; // Import axios for API calls
 
 // Set the app element for accessibility
 Modal.setAppElement('#root');
@@ -16,48 +17,58 @@ const PostFooter = ({ post }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [editingComment, setEditingComment] = useState(null);
 
+  const userId = localStorage.getItem("userId"); // Get the current user ID from localStorage
+
   // Fetch likes and comments when post changes
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Get likes
         const likesData = await likeApi.getLikesByPost(post.id);
         setLikes(likesData);
-        
-        // Check if user has liked this post
+
         const likeStatus = await likeApi.getLikeStatus(post.id);
         setIsLiked(likeStatus.liked);
         setUserLike(likeStatus.likeId);
-        
-        // Get comments
+
         const commentsData = await commentApi.getCommentsByPost(post.id);
         setComments(commentsData);
       } catch (error) {
         console.error('Error fetching post data:', error);
       }
     };
-    
+
     if (post && post.id) {
       fetchData();
     }
   }, [post]);
 
+  const handleSharePost = async () => {
+    try {
+      const response = await axios.post(
+        `http://localhost:8080/api/shared-posts?postId=${post.id}&userId=${userId}`
+      );
+      alert('Post shared successfully!');
+      console.log('Shared post response:', response.data);
+    } catch (error) {
+      console.error('Error sharing post:', error);
+      alert('Failed to share the post.');
+    }
+  };
+
   const handleLikeToggle = async () => {
     try {
       setIsLoading(true);
-      
+
       if (isLiked && userLike) {
-        // Unlike the post
         await likeApi.deleteLike(userLike);
         setIsLiked(false);
         setUserLike(null);
-        setLikes(prev => prev.filter(like => like.id !== userLike));
+        setLikes((prev) => prev.filter((like) => like.id !== userLike));
       } else {
-        // Like the post
         const newLike = await likeApi.createLike(post.id);
         setIsLiked(true);
         setUserLike(newLike.id);
-        setLikes(prev => [...prev, newLike]);
+        setLikes((prev) => [...prev, newLike]);
       }
     } catch (error) {
       console.error('Error toggling like status:', error);
@@ -141,24 +152,49 @@ const PostFooter = ({ post }) => {
             </svg>
             <span>{comments.length || 0}</span>
           </button>
+
+          <button
+            className="flex items-center space-x-1 text-gray-500 hover:text-green-600"
+            onClick={handleSharePost}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 8a3 3 0 11-6 0 3 3 0 016 0zm-3 5v6m0 0l-3-3m3 3l3-3"
+              />
+            </svg>
+            <span>Share</span>
+          </button>
         </div>
-        
+
         <div className="text-sm text-gray-500">
           {likes.length > 0 && (
-            <span>{likes.length} {likes.length === 1 ? 'person' : 'people'} liked this post</span>
+            <span>
+              {likes.length} {likes.length === 1 ? 'person' : 'people'} liked
+              this post
+            </span>
           )}
         </div>
       </div>
 
       {/* Comments Modal */}
       <Modal
-      isOpen={isModalOpen}
-      onRequestClose={closeModal}
-      contentLabel="Comments"
-      className="w-full max-w-xl mx-auto mt-24 bg-white rounded-2xl shadow-2xl border border-gray-200 transition-all duration-200"
-      overlayClassName="fixed inset-0  bg-opacity-50 flex items-center justify-center p-4"
-    >
-      <div className="flex flex-col h-full max-h-[80vh]">
+        isOpen={isModalOpen}
+        onRequestClose={() => setIsModalOpen(false)}
+        contentLabel="Comments"
+        className="max-w-lg w-[600px] mx-auto mt-20 bg-white rounded-lg shadow-xl overflow-hidden"
+        overlayClassName="fixed inset-0 bg-opacity-50 flex items-center justify-center p-4"
+      >
+        {/* Modal content */}
+        <div className="flex flex-col h-full max-h-[80vh]">
         {/* Modal Header */}
         <div className="flex justify-between items-center p-5 border-b border-gray-100">
           <h2 className="text-xl font-semibold text-gray-800">Comments</h2>
@@ -227,7 +263,7 @@ const PostFooter = ({ post }) => {
           </form>
         </div>
       </div>
-    </Modal>
+      </Modal>
 
     </>
   );
